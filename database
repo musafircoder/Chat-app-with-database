@@ -1,0 +1,38 @@
+from sqlalchemy import Column, Integer, String, ForeignKey, create_engine
+from sqlalchemy.orm import relationship, sessionmaker, declarative_base
+from pydantic import BaseModel
+
+# ---------------- Database Setup ----------------
+DATABASE_URL = "postgresql+psycopg2://postgres:musa123@localhost:5432/message saver"
+
+engine = create_engine(DATABASE_URL, echo=True)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+
+# ---------------- Models ----------------
+
+
+class Message(Base):
+    __tablename__ = "messages"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    sender_id = Column(Integer)
+    content = Column(String, nullable=False)
+
+    # Relationship back to User
+
+
+# ---------------- Schemas ----------------
+class MessageCreate(BaseModel):
+    content: str
+
+
+class MessageResponse(BaseModel):
+    id: int
+    sender_id: int
+    content: str
+
+    class Config:
+        orm_mode = True
+# python -c "from database import Base, engine; Base.metadata.create_all(bind=engine)"
